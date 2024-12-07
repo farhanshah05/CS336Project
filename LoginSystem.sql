@@ -15,14 +15,11 @@ DROP TABLE IF EXISTS `Employees`;
 CREATE TABLE Users (
     `username` varchar(30) NOT NULL,
     `password` varchar(30) NOT NULL,
+	`role` ENUM('customer', 'employee', 'admin') NOT NULL,
     PRIMARY KEY (`username`)
 );
-INSERT INTO `users` VALUES 
-    ('cust1', 'cust1$'), 
-    ('cust2', 'cust2$'), 
-    ('rep1', 'rep1$'), 
-    ('rep2', 'rep2$'), 
-    ('admin', 'admin$');
+INSERT INTO `Users` (`username`, `password`, `role`) VALUES 
+    ('admin', 'admin$', 'admin');
 
 -- Create Trains Table
 CREATE TABLE Trains (
@@ -106,15 +103,15 @@ CREATE TABLE Customers (
     `LastName` VARCHAR(50) NOT NULL,
     `FirstName` VARCHAR(50) NOT NULL,
     `Email` VARCHAR(100) UNIQUE NOT NULL,
-    `Username` VARCHAR(50) UNIQUE NOT NULL,
-    `Password` VARCHAR(255) NOT NULL
+    `Username` VARCHAR(30) UNIQUE NOT NULL,
+    `Password` VARCHAR(30) NOT NULL
 );
 INSERT INTO `Customers` (`LastName`, `FirstName`, `Email`, `Username`, `Password`) VALUES 
-    ('Smith', 'John', 'john.smith@example.com', 'johns', 'password1'),
-    ('Doe', 'Jane', 'jane.doe@example.com', 'janed', 'password2'),
-    ('Johnson', 'Emily', 'emily.johnson@example.com', 'emilyj', 'password3'),
-    ('Davis', 'Michael', 'michael.davis@example.com', 'michaeld', 'password4'),
-    ('Taylor', 'Rachel', 'rachel.taylor@example.com', 'rachelt', 'password5');
+    ('Smith', 'John', 'john.smith@example.com', 'johns', 'cust1$'),
+    ('Doe', 'Jane', 'jane.doe@example.com', 'janed', 'cust2$'),
+    ('Johnson', 'Emily', 'emily.johnson@example.com', 'emilyj', 'cust3$'),
+    ('Davis', 'Michael', 'michael.davis@example.com', 'michaeld', 'cust4$'),
+    ('Taylor', 'Rachel', 'rachel.taylor@example.com', 'rachelt', 'cust5$');
 
 
 CREATE TABLE Employees (
@@ -122,8 +119,8 @@ CREATE TABLE Employees (
     `SSN` VARCHAR(11) UNIQUE NOT NULL,
     `LastName` VARCHAR(50) NOT NULL,
     `FirstName` VARCHAR(50) NOT NULL,
-    `Username` VARCHAR(50) UNIQUE NOT NULL,
-    `Password` VARCHAR(255) NOT NULL
+    `Username` VARCHAR(30) UNIQUE NOT NULL,
+    `Password` VARCHAR(30) NOT NULL
 );
 INSERT INTO `Employees` (`SSN`, `LastName`, `FirstName`, `Username`, `Password`) VALUES 
     ('123-45-6789', 'Walker', 'Anna', 'annaw', 'emp1$'),
@@ -132,6 +129,11 @@ INSERT INTO `Employees` (`SSN`, `LastName`, `FirstName`, `Username`, `Password`)
     ('876-54-3210', 'Lewis', 'Sophia', 'sophial', 'emp4$'),
     ('345-67-8901', 'Harris', 'Daniel', 'danielh', 'emp5$');
 
+
+INSERT INTO `Users` (`username`, `password`, `role`)
+SELECT `Username`, `Password`, 'customer' AS `role` FROM `Customers`
+UNION
+SELECT `Username`, `Password`, 'employee' AS `role` FROM `Employees`;
 
 CREATE TABLE Reservations (
     `ReservationID` INT AUTO_INCREMENT PRIMARY KEY,
