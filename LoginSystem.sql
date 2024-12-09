@@ -108,6 +108,22 @@ CREATE TABLE Messages (
     FOREIGN KEY (`ConversationID`) REFERENCES Conversations(`ConversationID`)
 );
 
+-- Create Reservations Table
+CREATE TABLE Reservations (
+    `ReservationID` INT AUTO_INCREMENT PRIMARY KEY,
+    `CustomerID` INT NOT NULL,
+    `LineID` INT NOT NULL,
+    `OriginStationID` INT NOT NULL,
+    `DestinationStationID` INT NOT NULL,
+    `DepartureDateTime` DATETIME NOT NULL,
+    `ReservationDate` DATE NOT NULL,
+    `TotalFare` DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (`CustomerID`) REFERENCES Customers(`CustomerID`),
+    FOREIGN KEY (`LineID`) REFERENCES TransitLines(`LineID`),
+    FOREIGN KEY (`OriginStationID`) REFERENCES Stations(`StationID`),
+    FOREIGN KEY (`DestinationStationID`) REFERENCES Stations(`StationID`)
+);
+
 -- Insert manually constructed data into Users table
 INSERT INTO Users (username, password, role) VALUES
     -- Customers
@@ -156,6 +172,14 @@ INSERT INTO TransitLines (LineName, TrainID) VALUES
 INSERT INTO TrainSchedules (LineID) VALUES 
     (1), (2), (3), (4), (5);
 
+-- Insert Sample Data for Customers
+INSERT INTO Customers (LastName, FirstName, Email, Username, Password) VALUES 
+    ('Smith', 'John', 'john.smith@example.com', 'johns', 'cust1$'),
+    ('Doe', 'Jane', 'jane.doe@example.com', 'janed', 'cust2$'),
+    ('Johnson', 'Emily', 'emily.johnson@example.com', 'emilyj', 'cust3$'),
+    ('Davis', 'Michael', 'michaeldavis@example.com', 'michaeld', 'cust4$'),
+    ('Taylor', 'Rachel', 'racheltaylor@example.com', 'rachelt', 'cust5$');
+
 -- Insert Sample Data for TrainStops
 INSERT INTO TrainStops (ScheduleID, StationID, ArrivalTime, DepartureTime) VALUES 
     (1, 1, '2024-12-01 08:00:00', '2024-12-01 08:10:00'),
@@ -171,14 +195,6 @@ INSERT INTO TrainStops (ScheduleID, StationID, ArrivalTime, DepartureTime) VALUE
     (4, 7, '2024-12-04 14:00:00', '2024-12-04 14:10:00'),
     (5, 6, '2024-12-05 06:00:00', '2024-12-05 06:10:00'),
     (5, 8, '2024-12-05 09:00:00', '2024-12-05 09:15:00');
-
--- Insert Sample Data for Customers
-INSERT INTO Customers (LastName, FirstName, Email, Username, Password) VALUES 
-    ('Smith', 'John', 'john.smith@example.com', 'johns', 'cust1$'),
-    ('Doe', 'Jane', 'jane.doe@example.com', 'janed', 'cust2$'),
-    ('Johnson', 'Emily', 'emily.johnson@example.com', 'emilyj', 'cust3$'),
-    ('Davis', 'Michael', 'michaeldavis@example.com', 'michaeld', 'cust4$'),
-    ('Taylor', 'Rachel', 'racheltaylor@example.com', 'rachelt', 'cust5$');
 
 -- Insert Sample Data for Employees
 INSERT INTO Employees (SSN, LastName, FirstName, Username, Password) VALUES 
@@ -208,3 +224,17 @@ INSERT INTO Messages (ConversationID, SenderID, ReceiverID, Message, Timestamp) 
     (4, 104, 4, 'Currently, there are no delays.', '2024-12-04 10:10:00'),
     (5, 5, 105, 'What is the luggage allowance?', '2024-12-05 11:00:00'),
     (5, 105, 5, 'You can carry up to 50lbs.', '2024-12-05 11:05:00');
+
+
+-- Insert Sample Data into Reservations Table
+INSERT INTO Reservations (CustomerID, LineID, OriginStationID, DestinationStationID, DepartureDateTime, ReservationDate, TotalFare) VALUES
+    (1, 1, 1, 2, '2024-12-01 08:00:00', '2024-11-29', 50.00),
+    (2, 1, 1, 5, '2024-12-01 10:00:00', '2024-11-30', 75.00),
+    (3, 2, 3, 6, '2024-12-02 09:00:00', '2024-11-29', 65.00),
+    (4, 3, 7, 8, '2024-12-03 14:30:00', '2024-12-01', 80.00),
+    (5, 4, 4, 5, '2024-12-04 10:00:00', '2024-12-02', 55.00),
+    (2, 5, 6, 7, '2024-12-05 11:00:00', '2024-12-03', 90.00),
+    (3, 2, 2, 8, '2024-12-06 08:30:00', '2024-12-03', 100.00),
+    (1, 1, 2, 4, '2024-12-07 07:00:00', '2024-12-04', 120.00),
+    (4, 3, 3, 6, '2024-12-08 09:00:00', '2024-12-05', 45.00),
+    (5, 5, 5, 7, '2024-12-09 15:00:00', '2024-12-06', 85.00);
