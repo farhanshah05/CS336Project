@@ -23,7 +23,7 @@
     if (rs.next()) {
     	out.println("Username exists, please try another <a href='CreateAccount.jsp'>try again</a>");
     } else {
-    	int x = stmt.executeUpdate("insert into users values('" +userid+ "', '" +pass+ "')");
+    	int x = stmt.executeUpdate("INSERT INTO users (username, password, role) VALUES ('" + userid + "', '" + pass + "', 'customer')");
     	session.setAttribute("user", userid); // the username will be stored in the session
         response.sendRedirect("Success.jsp");
 
