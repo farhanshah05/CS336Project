@@ -118,6 +118,7 @@ CREATE TABLE Reservations (
     `DepartureDateTime` DATETIME NOT NULL,
     `ReservationDate` DATE NOT NULL,
     `TotalFare` DECIMAL(10, 2) NOT NULL,
+    `ReservationStatus` ENUM('current', 'past') NOT NULL,
     FOREIGN KEY (`CustomerID`) REFERENCES Customers(`CustomerID`),
     FOREIGN KEY (`LineID`) REFERENCES TransitLines(`LineID`),
     FOREIGN KEY (`OriginStationID`) REFERENCES Stations(`StationID`),
@@ -228,13 +229,13 @@ INSERT INTO Messages (ConversationID, SenderID, ReceiverID, Message, Timestamp) 
 
 -- Insert Sample Data into Reservations Table
 INSERT INTO Reservations (CustomerID, LineID, OriginStationID, DestinationStationID, DepartureDateTime, ReservationDate, TotalFare) VALUES
-    (1, 1, 1, 2, '2024-12-01 08:00:00', '2024-11-29', 50.00),
-    (2, 1, 1, 5, '2024-12-01 10:00:00', '2024-11-30', 75.00),
-    (3, 2, 3, 6, '2024-12-02 09:00:00', '2024-11-29', 65.00),
-    (4, 3, 7, 8, '2024-12-03 14:30:00', '2024-12-01', 80.00),
-    (5, 4, 4, 5, '2024-12-04 10:00:00', '2024-12-02', 55.00),
-    (2, 5, 6, 7, '2024-12-05 11:00:00', '2024-12-03', 90.00),
-    (3, 2, 2, 8, '2024-12-06 08:30:00', '2024-12-03', 100.00),
-    (1, 1, 2, 4, '2024-12-07 07:00:00', '2024-12-04', 120.00),
-    (4, 3, 3, 6, '2024-12-08 09:00:00', '2024-12-05', 45.00),
-    (5, 5, 5, 7, '2024-12-09 15:00:00', '2024-12-06', 85.00);
+    (1, 1, 1, 2, '2024-12-01 08:00:00', '2024-11-29', 50.00, 'current'),
+    (2, 1, 1, 5, '2024-12-01 10:00:00', '2024-11-30', 75.00, 'current'),
+    (3, 2, 3, 6, '2024-12-02 09:00:00', '2024-11-29', 65.00, 'current'),
+    (4, 3, 7, 8, '2024-12-03 14:30:00', '2024-12-01', 80.00, 'past'),
+    (5, 4, 4, 5, '2024-12-04 10:00:00', '2024-12-02', 55.00, 'past'),
+    (2, 5, 6, 7, '2024-12-05 11:00:00', '2024-12-03', 90.00, 'current'),
+    (3, 2, 2, 8, '2024-12-06 08:30:00', '2024-12-03', 100.00, 'past'),
+    (1, 1, 2, 4, '2024-12-07 07:00:00', '2024-12-04', 120.00, 'past'),
+    (4, 3, 3, 6, '2024-12-08 09:00:00', '2024-12-05', 45.00, 'past'),
+    (5, 5, 5, 7, '2024-12-09 15:00:00', '2024-12-06', 85.00, 'past');
