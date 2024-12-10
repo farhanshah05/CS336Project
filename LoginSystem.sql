@@ -2,16 +2,17 @@ CREATE DATABASE IF NOT EXISTS `LoginSystem`;
 USE `LoginSystem`;
 
 -- Drop existing tables if they exist
-DROP TABLE IF EXISTS `TrainStops`;
-DROP TABLE IF EXISTS `TrainSchedules`;
-DROP TABLE IF EXISTS `TransitLines`;
-DROP TABLE IF EXISTS `Trains`;
-DROP TABLE IF EXISTS `Stations`;
-DROP TABLE IF EXISTS `Users`;
-DROP TABLE IF EXISTS `Customers`;
+DROP TABLE IF EXISTS `Messages`; 
+DROP TABLE IF EXISTS `Conversations`; 
+DROP TABLE IF EXISTS `Reservations`; 
+DROP TABLE IF EXISTS `TrainStops`; 
+DROP TABLE IF EXISTS `TrainSchedules`; 
+DROP TABLE IF EXISTS `TransitLines`; 
+DROP TABLE IF EXISTS `Trains`; 
+DROP TABLE IF EXISTS `Stations`; 
+DROP TABLE IF EXISTS `Users`; 
+DROP TABLE IF EXISTS `Customers`; 
 DROP TABLE IF EXISTS `Employees`;
-DROP TABLE IF EXISTS `Conversations`;
-DROP TABLE IF EXISTS `Messages`;
 
 -- Create Users Table
 CREATE TABLE Users (
