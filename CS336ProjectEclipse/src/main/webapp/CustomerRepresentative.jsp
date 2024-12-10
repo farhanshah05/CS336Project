@@ -14,7 +14,7 @@
         return;
     }
 
-    ApplicationDB db = new ApplicationDB();	
+    ApplicationDB db = new ApplicationDB();    
     Connection con = db.getConnection();
 %>
 <html>
@@ -27,22 +27,53 @@
 
     <!-- Manage Train Schedules -->
     <h3>Manage Train Schedules</h3>
+
+    <!-- Sorting Options -->
+    <form method="GET">
+        <label for="sort">Sort By:</label>
+        <select name="sort" id="sort">
+            <option value="">--Select--</option>
+            <option value="departure">Departure Time</option>
+            <option value="arrival">Arrival Time</option>
+            <option value="lineName">Line Name</option>
+            <option value="fare">Total Fare</option>
+        </select>
+        <button type="submit">Sort</button>
+    </form>
+
     <table border="1">
         <tr>
             <th>Schedule ID</th>
             <th>Line Name</th>
             <th>Departure (First Stop)</th>
             <th>Arrival (Last Stop)</th>
+            <th>Total Fare</th>
             <th>Actions</th>
         </tr>
         <%
+            String sortOption = request.getParameter("sort");
+            String orderByClause = "";
+
+            if ("departure".equals(sortOption)) {
+                orderByClause = "ORDER BY Departure";
+            } else if ("arrival".equals(sortOption)) {
+                orderByClause = "ORDER BY Arrival";
+            } else if ("lineName".equals(sortOption)) {
+                orderByClause = "ORDER BY tl.LineName";
+            } else if ("fare".equals(sortOption)) {
+                orderByClause = "ORDER BY TotalFare DESC";
+            }
+
+            String query = "SELECT ts.ScheduleID, tl.LineName, " +
+                           "(SELECT MIN(ts1.ArrivalTime) FROM TrainStops ts1 WHERE ts1.ScheduleID = ts.ScheduleID) AS Departure, " +
+                           "(SELECT MAX(ts2.DepartureTime) FROM TrainStops ts2 WHERE ts2.ScheduleID = ts.ScheduleID) AS Arrival, " +
+                           "(SELECT SUM(r.TotalFare) FROM Reservations r WHERE r.LineID = tl.LineID) AS TotalFare " +
+                           "FROM TrainSchedules ts " +
+                           "JOIN TransitLines tl ON ts.LineID = tl.LineID " +
+                           orderByClause;
+
             try (Statement stmt = con.createStatement()) {
-                ResultSet rs = stmt.executeQuery(
-                    "SELECT ts.ScheduleID, tl.LineName, " +
-                    "(SELECT MIN(ArrivalTime) FROM TrainStops WHERE ScheduleID = ts.ScheduleID) AS Departure, " +
-                    "(SELECT MAX(DepartureTime) FROM TrainStops WHERE ScheduleID = ts.ScheduleID) AS Arrival " +
-                    "FROM TrainSchedules ts " +
-                    "JOIN TransitLines tl ON ts.LineID = tl.LineID");
+                ResultSet rs = stmt.executeQuery(query);
 
                 while (rs.next()) {
         %>
@@ -51,6 +82,7 @@
             <td><%= rs.getString("LineName") %></td>
             <td><%= rs.getTimestamp("Departure") %></td>
             <td><%= rs.getTimestamp("Arrival") %></td>
+            <td><%= rs.getDouble("TotalFare") %></td>
             <td>
                 <form action="EditSchedule.jsp" method="POST" style="display:inline;">
                     <input type="hidden" name="scheduleID" value="<%= rs.getInt("ScheduleID") %>">
@@ -94,7 +126,7 @@
         </tr>
         <%
             String searchKeyword = request.getParameter("search");
-            String query = "SELECT c.ConversationID, cu.FirstName AS CustomerName, cu.LastName AS CustomerLastName, " +
+            String convQuery = "SELECT c.ConversationID, cu.FirstName AS CustomerName, cu.LastName AS CustomerLastName, " +
                            "(SELECT m.Message FROM Messages m WHERE m.ConversationID = c.ConversationID ORDER BY m.Timestamp ASC LIMIT 1) AS Subject, " +
                            "(SELECT m.Message FROM Messages m WHERE m.ConversationID = c.ConversationID ORDER BY m.Timestamp DESC LIMIT 1) AS LatestReply, " +
                            "c.Status " +
@@ -103,13 +135,13 @@
                            "WHERE c.Status = 'open'";
 
             if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-                query += " AND (cu.FirstName LIKE '%" + searchKeyword + "%' " +
+                convQuery += " AND (cu.FirstName LIKE '%" + searchKeyword + "%' " +
                          "OR cu.LastName LIKE '%" + searchKeyword + "%' " +
                          "OR (SELECT m.Message FROM Messages m WHERE m.ConversationID = c.ConversationID ORDER BY m.Timestamp ASC LIMIT 1) LIKE '%" + searchKeyword + "%')";
             }
 
             try (Statement stmt = con.createStatement()) {
-                ResultSet rs = stmt.executeQuery(query);
+                ResultSet rs = stmt.executeQuery(convQuery);
 
                 while (rs.next()) {
         %>
