@@ -135,11 +135,15 @@ INSERT INTO Users (username, password, role) VALUES
     ('michaeld', 'cust4$', 'customer'),
     ('rachelt', 'cust5$', 'customer'),
     -- Employees
-    ('annaw', 'emp1$', 'employee'),
-    ('samuele', 'emp2$', 'employee'),
-    ('chrisw', 'emp3$', 'employee'),
-    ('sophial', 'emp4$', 'employee'),
-    ('danielh', 'emp5$', 'employee'),
+	('annaw', 'emp1$', 'employee'),
+	('samuele', 'emp2$', 'employee'),
+	('chrisw', 'emp3$', 'employee'),
+	('sophial', 'emp4$', 'employee'),
+	('danielh', 'emp5$', 'employee'),
+	('emmat', 'emp6$', 'employee'),
+	('oliviam', 'emp7$', 'employee'),
+	('jamesj', 'emp8$', 'employee'),
+	('emilyb', 'emp9$', 'employee'),
     -- Admin
     ('admin', 'admin$', 'admin');
 
@@ -198,34 +202,39 @@ INSERT INTO TrainStops (ScheduleID, StationID, ArrivalTime, DepartureTime) VALUE
     (5, 6, '2024-12-05 06:00:00', '2024-12-05 06:10:00'),
     (5, 8, '2024-12-05 09:00:00', '2024-12-05 09:15:00');
 
--- Insert Sample Data for Employees
-INSERT INTO Employees (SSN, LastName, FirstName, Username, Password) VALUES 
-    ('123-45-6789', 'Walker', 'Anna', 'annaw', 'emp1$'),
-    ('987-65-4321', 'Evans', 'Samuel', 'samuele', 'emp2$'),
-    ('567-89-1234', 'White', 'Chris', 'chrisw', 'emp3$'),
-    ('876-54-3210', 'Lewis', 'Sophia', 'sophial', 'emp4$'),
-    ('345-67-8901', 'Harris', 'Daniel', 'danielh', 'emp5$');
+INSERT INTO Employees (SSN, LastName, FirstName, Username, Password)
+VALUES
+('123-45-6789', 'Walker', 'Anna', 'annaw', 'emp1$'),
+('987-65-4321', 'Evans', 'Samuel', 'samuele', 'emp2$'),
+('567-89-1234', 'White', 'Chris', 'chrisw', 'emp3$'),
+('876-54-3210', 'Lewis', 'Sophia', 'sophial', 'emp4$'),
+('345-67-8901', 'Harris', 'Daniel', 'danielh', 'emp5$'),
+('234-56-7890', 'Taylor', 'Emma', 'emmat', 'emp6$'),
+('789-01-2345', 'Moore', 'Olivia', 'oliviam', 'emp7$'),
+('890-12-3456', 'Johnson', 'James', 'jamesj', 'emp8$'),
+('456-78-9012', 'Brown', 'Emily', 'emilyb', 'emp9$');
+
 
 -- Insert Sample Data for Conversations
 INSERT INTO Conversations (CustomerID, EmployeeID, Status) VALUES
     (1, 1, 'open'),
     (2, 2, 'open'),
-    (3, 3, 'closed'),
+    (3, 3, 'open'),
     (4, 4, 'open'),
     (5, 5, 'closed');
 
 -- Insert Sample Data for Messages
 INSERT INTO Messages (ConversationID, SenderID, ReceiverID, Message, Timestamp) VALUES
-    (1, 1, 101, 'Can I get a refund for my ticket?', '2024-12-01 08:00:00'),
-    (1, 101, 1, 'Sure, please provide your ticket details.', '2024-12-01 08:05:00'),
-    (2, 2, 102, 'How do I reschedule my train?', '2024-12-02 14:00:00'),
-    (2, 102, 2, 'You can reschedule online or I can assist you.', '2024-12-02 14:10:00'),
-    (3, 3, 103, 'Is there a discount for students?', '2024-12-03 09:00:00'),
-    (3, 103, 3, 'Yes, we offer 10%.', '2024-12-03 09:05:00'),
-    (4, 4, 104, 'Are there any train delays for tomorrow?', '2024-12-04 10:00:00'),
-    (4, 104, 4, 'Currently, there are no delays.', '2024-12-04 10:10:00'),
-    (5, 5, 105, 'What is the luggage allowance?', '2024-12-05 11:00:00'),
-    (5, 105, 5, 'You can carry up to 50lbs.', '2024-12-05 11:05:00');
+    (1, 1, 9, 'Can I get a refund for my ticket?', '2024-12-01 08:00:00'),
+    (1, 9, 1, 'Sure, please provide your ticket details.', '2024-12-01 08:05:00'),
+    (2, 2, 8, 'How do I reschedule my train?', '2024-12-02 14:00:00'),
+    (2, 8, 2, 'You can reschedule online or I can assist you.', '2024-12-02 14:10:00'),
+    (3, 3, 7, 'Is there a discount for students?', '2024-12-03 09:00:00'),
+    (3, 7, 3, 'Yes, we offer 10%.', '2024-12-03 09:05:00'),
+    (4, 4, 6, 'Are there any train delays for tomorrow?', '2024-12-04 10:00:00'),
+    (4, 6, 4, 'Currently, there are no delays.', '2024-12-04 10:10:00'),
+    (5, 5, 7, 'What is the luggage allowance?', '2024-12-05 11:00:00'),
+    (5, 7, 5, 'You can carry up to 50lbs.', '2024-12-05 11:05:00');
 
 
 -- Insert Sample Data into Reservations Table
