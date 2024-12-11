@@ -96,7 +96,7 @@ CREATE TABLE Conversations (
     `StartDate` DATETIME DEFAULT CURRENT_TIMESTAMP,
     `Status` ENUM('open', 'closed') DEFAULT 'open',
     FOREIGN KEY (`CustomerID`) REFERENCES Customers(`CustomerID`),
-    FOREIGN KEY (`EmployeeID`) REFERENCES Employees(`EmployeeID`)
+    FOREIGN KEY (`EmployeeID`) REFERENCES Employees(`EmployeeID`) ON DELETE CASCADE
 );
 
 -- Create Messages Table
@@ -107,7 +107,7 @@ CREATE TABLE Messages (
     `ReceiverID` INT NOT NULL,
     `Message` TEXT NOT NULL,
     `Timestamp` DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (`ConversationID`) REFERENCES Conversations(`ConversationID`)
+    FOREIGN KEY (`ConversationID`) REFERENCES Conversations(`ConversationID`) ON DELETE CASCADE
 );
 
 -- Create Reservations Table
