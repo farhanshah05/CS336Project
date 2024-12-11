@@ -73,7 +73,12 @@
 %>
 
 	<h3>Best Customer!</h3>
-	<h4>The Best Customer is: <%= bestCustomerName %> with <%= bestCustomerReservations %> reservations</h4>
+	<div style="padding: 10px; border: 2px solid #4CAF50; background-color: #e8f5e9; display: inline-block;">
+	    <h2 style="color: #4CAF50; margin: 0; font-size: 1.5em; font-weight: bold;">
+	        <%= bestCustomerName %>
+	    </h2>
+	    <p style="margin: 0; font-size: 1.2em;">Reservations: <strong><%= bestCustomerReservations %></strong></p>
+	</div>
 
     
     <h3>Most Popular Train Lines</h3>
