@@ -26,6 +26,10 @@
     <h1>Welcome, <%= user %>!</h1>
     <h2>Customer Dashboard</h2>
 
+    <form action="Logout.jsp" method="GET" style="margin-top: 20px;">
+	    <button type="submit">Logout</button>
+	</form><br>
+
     <!-- Browse Questions and Answers -->
     <h3>Browse Questions and Answers</h3>
     <form method="GET">
