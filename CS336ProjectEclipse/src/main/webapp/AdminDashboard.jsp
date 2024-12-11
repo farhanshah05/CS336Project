@@ -26,6 +26,10 @@
 
 	<h1>Welcome, <%= user %>!</h1>
     <h2>Admin Dashboard</h2>
+
+<form action="Logout.jsp" method="GET" style="margin-top: 20px;">
+    <button type="submit">Logout</button>
+</form><br><br>
     
     <form action="AdminEmployeeManager.jsp" method="GET" style="display:inline;">
         <button type="submit">Manage Customer Representatives</button>
