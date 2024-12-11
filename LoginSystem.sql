@@ -18,7 +18,7 @@ DROP TABLE IF EXISTS `Employees`;
 CREATE TABLE Users (
     `username` VARCHAR(30) NOT NULL,
     `password` VARCHAR(30) NOT NULL,
-    `role` ENUM('customer', 'employee', 'admin') NOT NULL,
+    `role` ENUM('customer', 'employee', 'admin') DEFAULT 'customer',
     PRIMARY KEY (`username`)
 );
 
