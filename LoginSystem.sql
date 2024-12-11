@@ -43,6 +43,7 @@ CREATE TABLE TransitLines (
     `LineID` INT NOT NULL AUTO_INCREMENT,
     `LineName` VARCHAR(100) NOT NULL,
     `TrainID` INT NOT NULL,
+    `Fare` DECIMAL(10, 2) NOT NULL,
     PRIMARY KEY (`LineID`),
     FOREIGN KEY (`TrainID`) REFERENCES Trains(`TrainID`)
 );
@@ -119,7 +120,7 @@ CREATE TABLE Reservations (
     `DepartureDateTime` DATETIME NOT NULL,
     `ReservationDate` DATE NOT NULL,
     `TotalFare` DECIMAL(10, 2) NOT NULL,
-    `ReservationStatus` ENUM('current', 'past') NOT NULL,
+    `ReservationStatus` ENUM('current', 'past') DEFAULT 'current',
     FOREIGN KEY (`CustomerID`) REFERENCES Customers(`CustomerID`),
     FOREIGN KEY (`LineID`) REFERENCES TransitLines(`LineID`),
     FOREIGN KEY (`OriginStationID`) REFERENCES Stations(`StationID`),
@@ -167,12 +168,12 @@ INSERT INTO Stations VALUES
     (8, 'O’Hare International', 'Chicago', 'IL');
 
 -- Insert Sample Data for TransitLines
-INSERT INTO TransitLines (LineName, TrainID) VALUES 
-    ('Northeast Corridor', 1001),
-    ('Coastal Express', 1002),
-    ('Midwest Local', 1003),
-    ('Pacific Route', 1004),
-    ('City Commuter', 1005);
+INSERT INTO TransitLines (LineName, TrainID, Fare) VALUES 
+    ('Northeast Corridor', 1001, 50.00),
+    ('Coastal Express', 1002, 60.00),
+    ('Midwest Local', 1003, 45.00),
+    ('Pacific Route', 1004, 70.00),
+    ('City Commuter', 1005, 40.00);
 
 -- Insert Sample Data for TrainSchedules
 INSERT INTO TrainSchedules (LineID) VALUES 
@@ -188,19 +189,19 @@ INSERT INTO Customers (LastName, FirstName, Email, Username, Password) VALUES
 
 -- Insert Sample Data for TrainStops
 INSERT INTO TrainStops (ScheduleID, StationID, ArrivalTime, DepartureTime) VALUES 
-    (1, 1, '2024-12-01 08:00:00', '2024-12-01 08:10:00'),
-    (1, 2, '2024-12-01 10:00:00', '2024-12-01 10:15:00'),
-    (1, 5, '2024-12-01 13:00:00', '2024-12-01 13:10:00'),
-    (2, 3, '2024-12-02 09:00:00', '2024-12-02 09:10:00'),
-    (2, 4, '2024-12-02 11:00:00', '2024-12-02 11:15:00'),
-    (2, 6, '2024-12-02 14:00:00', '2024-12-02 14:20:00'),
-    (3, 7, '2024-12-03 08:30:00', '2024-12-03 08:40:00'),
-    (3, 8, '2024-12-03 11:00:00', '2024-12-03 11:15:00'),
-    (4, 1, '2024-12-04 07:00:00', '2024-12-04 07:15:00'),
-    (4, 2, '2024-12-04 10:00:00', '2024-12-04 10:15:00'),
-    (4, 7, '2024-12-04 14:00:00', '2024-12-04 14:10:00'),
-    (5, 6, '2024-12-05 06:00:00', '2024-12-05 06:10:00'),
-    (5, 8, '2024-12-05 09:00:00', '2024-12-05 09:15:00');
+    (1, 1, '2025-01-12 08:00:00', '2025-01-12 08:10:00'),
+    (1, 2, '2025-01-12 10:00:00', '2025-01-12 10:15:00'),
+    (1, 5, '2025-01-12 13:00:00', '2025-01-12 13:10:00'),
+    (2, 3, '2025-01-13 09:00:00', '2025-01-13 09:10:00'),
+    (2, 4, '2025-01-13 11:00:00', '2025-01-13 11:15:00'),
+    (2, 6, '2025-01-13 14:00:00', '2025-01-13 14:20:00'),
+    (3, 7, '2025-01-14 08:30:00', '2025-01-14 08:40:00'),
+    (3, 8, '2025-01-14 11:00:00', '2025-01-14 11:15:00'),
+    (4, 1, '2025-01-14 07:00:00', '2025-01-14 07:15:00'),
+    (4, 2, '2025-01-14 10:00:00', '2025-01-14 10:15:00'),
+    (4, 7, '2025-01-14 14:00:00', '2025-01-14 14:10:00'),
+    (5, 6, '2025-01-14 06:00:00', '2025-01-14 06:10:00'),
+    (5, 8, '2025-01-14 09:00:00', '2025-01-14 09:15:00');
 
 INSERT INTO Employees (SSN, LastName, FirstName, Username, Password)
 VALUES
@@ -239,12 +240,12 @@ INSERT INTO Messages (ConversationID, SenderID, ReceiverID, Message, Timestamp) 
 
 -- Insert Sample Data into Reservations Table
 INSERT INTO Reservations (CustomerID, LineID, OriginStationID, DestinationStationID, DepartureDateTime, ReservationDate, TotalFare, ReservationStatus) VALUES
-    (1, 1, 1, 2, '2024-12-01 08:00:00', '2024-11-29', 50.00, 'current'),
-    (2, 1, 1, 5, '2024-12-01 10:00:00', '2024-11-30', 75.00, 'current'),
-    (3, 2, 3, 6, '2024-12-02 09:00:00', '2024-11-29', 65.00, 'current'),
+    (1, 1, 1, 2, '2025-01-12 08:00:00', '2024-11-29', 50.00, 'current'),
+    (2, 1, 1, 5, '2025-01-14 10:00:00', '2024-11-30', 75.00, 'current'),
+    (3, 2, 3, 6, '2025-01-20 09:00:00', '2024-11-29', 65.00, 'current'),
     (4, 3, 7, 8, '2024-12-03 14:30:00', '2024-12-01', 80.00, 'past'),
     (5, 4, 4, 5, '2024-12-04 10:00:00', '2024-12-02', 55.00, 'past'),
-    (2, 5, 6, 7, '2024-12-05 11:00:00', '2024-12-03', 90.00, 'current'),
+    (2, 5, 6, 7, '2025-01-23 11:00:00', '2024-12-03', 90.00, 'current'),
     (3, 2, 2, 8, '2024-12-06 08:30:00', '2024-12-03', 100.00, 'past'),
     (1, 1, 2, 4, '2024-12-07 07:00:00', '2024-12-04', 120.00, 'past'),
     (4, 3, 3, 6, '2024-12-08 09:00:00', '2024-12-05', 45.00, 'past'),
