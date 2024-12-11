@@ -8,7 +8,7 @@
     <script>
         function clearFiltersAndReload() {
             document.getElementById("searchKeyword").value = "";
-            document.forms[0].submit(); // Submit the form with an empty search field
+            <!--document.forms[0].submit();--> // Submit the form with an empty search field
         }
     </script>
 </head>

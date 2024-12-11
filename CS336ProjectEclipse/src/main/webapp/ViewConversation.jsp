@@ -34,7 +34,7 @@
                 "CASE " +
                 "WHEN m.SenderID = c.CustomerID THEN 'Customer' " +
                 "WHEN m.SenderID = e.EmployeeID THEN 'Representative' " +
-                "ELSE 'Unknown' END AS SenderType " +
+                "ELSE 'Employee' END AS SenderType " +
                 "FROM Messages m " +
                 "JOIN Conversations c ON m.ConversationID = c.ConversationID " +
                 "LEFT JOIN Employees e ON e.EmployeeID = m.SenderID " +

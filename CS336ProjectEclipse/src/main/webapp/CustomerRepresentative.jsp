@@ -26,8 +26,8 @@
     <h2>Customer Representative Dashboard</h2>
 
     <form action="Logout.jsp" method="GET" style="margin-top: 20px;">
-	    <button type="submit">Logout</button>
-	</form><br>
+        <button type="submit">Logout</button>
+    </form><br>
 
     <!-- Manage Train Schedules -->
     <h3>Manage Train Schedules</h3>
@@ -109,6 +109,111 @@
         <button type="submit">Add New Train Schedule</button>
     </form>
     <br>
+
+    <!-- View Train Schedules by Station -->
+    <h3>View Train Schedules by Station</h3>
+    <form method="GET">
+        <label for="originStationID">Origin Station:</label>
+        <select id="originStationID" name="originStationID">
+            <option value="">--Select Station--</option>
+            <%
+                try {
+                    String stationQuery = "SELECT StationID, StationName FROM Stations";
+                    try (Statement stationStmt = con.createStatement();
+                         ResultSet stationRs = stationStmt.executeQuery(stationQuery)) {
+                        while (stationRs.next()) {
+            %>
+                            <option value="<%= stationRs.getInt("StationID") %>"
+                                <%= request.getParameter("originStationID") != null && request.getParameter("originStationID").equals(String.valueOf(stationRs.getInt("StationID"))) ? "selected" : "" %>>
+                                <%= stationRs.getString("StationName") %>
+                            </option>
+            <%
+                        }
+                    }
+                } catch (SQLException e) {
+                    out.println("<p>Error loading stations: " + e.getMessage() + "</p>");
+                }
+            %>
+        </select>
+
+        <label for="destinationStationID">Destination Station:</label>
+        <select id="destinationStationID" name="destinationStationID">
+            <option value="">--Select Station--</option>
+            <%
+                try {
+                    String stationQuery = "SELECT StationID, StationName FROM Stations";
+                    try (Statement stationStmt = con.createStatement();
+                         ResultSet stationRs = stationStmt.executeQuery(stationQuery)) {
+                        while (stationRs.next()) {
+            %>
+                            <option value="<%= stationRs.getInt("StationID") %>"
+                                <%= request.getParameter("destinationStationID") != null && request.getParameter("destinationStationID").equals(String.valueOf(stationRs.getInt("StationID"))) ? "selected" : "" %>>
+                                <%= stationRs.getString("StationName") %>
+                            </option>
+            <%
+                        }
+                    }
+                } catch (SQLException e) {
+                    out.println("<p>Error loading stations: " + e.getMessage() + "</p>");
+                }
+            %>
+        </select>
+        <button type="submit">View Schedules</button>
+    </form>
+
+    <%
+        String originStationID = request.getParameter("originStationID");
+        String destinationStationID = request.getParameter("destinationStationID");
+
+        if ((originStationID != null && !originStationID.isEmpty()) || (destinationStationID != null && !destinationStationID.isEmpty())) {
+            String stationScheduleQuery = 
+                "SELECT ts.ScheduleID, tl.LineName, ts1.ArrivalTime AS Departure, ts2.DepartureTime AS Arrival " +
+                "FROM TrainSchedules ts " +
+                "JOIN TransitLines tl ON ts.LineID = tl.LineID " +
+                "LEFT JOIN TrainStops ts1 ON ts1.ScheduleID = ts.ScheduleID AND ts1.StationID = ? " +
+                "LEFT JOIN TrainStops ts2 ON ts2.ScheduleID = ts.ScheduleID AND ts2.StationID = ? " +
+                "WHERE (? IS NULL OR ts1.StationID = ?) " +
+                "AND (? IS NULL OR ts2.StationID = ?)";
+
+            try (PreparedStatement ps = con.prepareStatement(stationScheduleQuery)) {
+                ps.setString(1, originStationID);
+                ps.setString(2, destinationStationID);
+                ps.setString(3, originStationID);
+                ps.setString(4, originStationID);
+                ps.setString(5, destinationStationID);
+                ps.setString(6, destinationStationID);
+
+                ResultSet stationSchedules = ps.executeQuery();
+    %>
+    <table border="1">
+        <tr>
+            <th>Schedule ID</th>
+            <th>Line Name</th>
+            <th>Departure Time</th>
+            <th>Arrival Time</th>
+        </tr>
+        <%
+                boolean hasResults = false;
+                while (stationSchedules.next()) {
+                    hasResults = true;
+        %>
+                <tr>
+                    <td><%= stationSchedules.getInt("ScheduleID") %></td>
+                    <td><%= stationSchedules.getString("LineName") %></td>
+                    <td><%= stationSchedules.getTimestamp("Departure") %></td>
+                    <td><%= stationSchedules.getTimestamp("Arrival") %></td>
+                </tr>
+        <%
+                }
+                if (!hasResults) {
+                    out.println("<tr><td colspan='4'>No schedules found for the selected stations.</td></tr>");
+                }
+            } catch (SQLException e) {
+                out.println("<p>Error fetching schedules: " + e.getMessage() + "</p>");
+            }
+        }
+    %>
+    </table>
 
     <!-- Manage Conversations Section -->
     <h3>Open Questions</h3>
