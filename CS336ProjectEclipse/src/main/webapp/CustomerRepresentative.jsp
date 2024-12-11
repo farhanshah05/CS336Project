@@ -25,6 +25,10 @@
     <h1>Welcome, <%= user %>!</h1>
     <h2>Customer Representative Dashboard</h2>
 
+    <form action="Logout.jsp" method="GET" style="margin-top: 20px;">
+	    <button type="submit">Logout</button>
+	</form><br>
+
     <!-- Manage Train Schedules -->
     <h3>Manage Train Schedules</h3>
 
