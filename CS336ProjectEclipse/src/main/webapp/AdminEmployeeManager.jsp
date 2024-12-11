@@ -13,147 +13,109 @@
         response.sendRedirect("Login.jsp"); // Redirect unauthorized users to the login page
         return;
     }
+
+    ApplicationDB db = new ApplicationDB();	
+    Connection con = db.getConnection();
 %>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Admin Employee Manager</title>
+<title>Admin Dashboard</title>
 </head>
 <body>
 
 	<h1>Welcome, <%= user %>!</h1>
-    <h2>Manage Customer Representatives</h2>
+    <h2>Admin Dashboard</h2>
     
-    <form action="AdminDashboard.jsp" method="GET">
-    <button type="submit">Back to Admin Dashboard</button>
-	</form>
+    <form action="Logout.jsp" method="GET" style="margin-top: 20px;">
+	    <button type="submit">Logout</button>
+	</form><br><br>
+    
+    <form action="AdminEmployeeManager.jsp" method="GET" style="display:inline;">
+        <button type="submit">Manage Customer Representatives</button>
+    </form>
+    
+    <form action="AdminSalesReport.jsp" method="GET" style="display:inline;">
+        <button type="submit">Monthly Sales Reports</button>
+    </form>
+    
+    <form action="AdminReservationList.jsp" method="GET" style="display:inline;">
+        <button type="submit">List of Reservations</button>
+    </form>
+    
+    <form action="AdminRevenueList.jsp" method="GET" style="display:inline;">
+        <button type="submit">List of Revenue</button>
+    </form>
     
     <%
-        // Database connection setup
-        ApplicationDB db = new ApplicationDB();
-        Connection con = db.getConnection();
+    // Query to find the best customer
+    String bestCustomerQuery = "SELECT CONCAT(c.FirstName, ' ', c.LastName) AS CustomerName, " +
+                               "COUNT(r.ReservationID) AS NumberOfReservations " +
+                               "FROM Reservations r " +
+                               "JOIN Customers c ON r.CustomerID = c.CustomerID " +
+                               "GROUP BY c.CustomerID, c.FirstName, c.LastName " +
+                               "ORDER BY NumberOfReservations DESC " +
+                               "LIMIT 1";
 
-        // Handle Delete Request
-        String deleteID = request.getParameter("deleteID");
-        if (deleteID != null) {
-            String deleteQuery = "DELETE FROM Employees WHERE EmployeeID = ?";
-            try (PreparedStatement pstmt = con.prepareStatement(deleteQuery)) {
-                pstmt.setInt(1, Integer.parseInt(deleteID));
-                pstmt.executeUpdate();
-                out.println("<p>Representative deleted successfully!</p>");
-            } catch (SQLException e) {
-                out.println("<p>Error deleting representative: " + e.getMessage() + "</p>");
-            }
+    String bestCustomerName = "No customer data available";
+    int bestCustomerReservations = 0;
+
+    try (Statement stmt = con.createStatement()) {
+        ResultSet rs = stmt.executeQuery(bestCustomerQuery);
+
+        if (rs.next()) {
+            bestCustomerName = rs.getString("CustomerName");
+            bestCustomerReservations = rs.getInt("NumberOfReservations");
         }
+    } catch (SQLException e) {
+        out.println("<p>Error fetching the best customer: " + e.getMessage() + "</p>");
+    }
+%>
 
-     // Handle Add Request
-        if (request.getParameter("add") != null) {
-            String firstName = request.getParameter("firstName");
-            String lastName = request.getParameter("lastName");
-            String username = request.getParameter("username");
-            String password = request.getParameter("password");
-            String ssn = request.getParameter("ssn");
+	<h3>Best Customer!</h3>
+	<div style="padding: 10px; border: 2px solid #4CAF50; background-color: #e8f5e9; display: inline-block;">
+	    <h2 style="color: #4CAF50; margin: 0; font-size: 1.5em; font-weight: bold;">
+	        <%= bestCustomerName %>
+	    </h2>
+	    <p style="margin: 0; font-size: 1.2em;">Reservations: <strong><%= bestCustomerReservations %></strong></p>
+	</div>
 
-            String addQuery = "INSERT INTO Employees (FirstName, LastName, Username, Password, SSN) VALUES (?, ?, ?, ?, ?)";
-            try (PreparedStatement pstmt = con.prepareStatement(addQuery)) {
-                pstmt.setString(1, firstName);
-                pstmt.setString(2, lastName);
-                pstmt.setString(3, username);
-                pstmt.setString(4, password);
-                pstmt.setString(5, ssn);
-                pstmt.executeUpdate();
-                out.println("<p>Representative added successfully!</p>");
-            } catch (SQLException e) {
-                out.println("<p>Error adding representative: " + e.getMessage() + "</p>");
+
+    
+    <h3>Most Popular Train Lines</h3>
+    
+    <table border="1">
+    <tr>
+        <th>Transit Line</th>
+        <th>Number of Reservations</th>
+    </tr>
+    <%
+        // SQL query to fetch the 5 most active transit lines
+        String query = "SELECT tl.LineName AS TransitLine, " +
+                       "COUNT(r.ReservationID) AS NumberOfReservations " +
+                       "FROM Reservations r " +
+                       "JOIN TransitLines tl ON r.LineID = tl.LineID " +
+                       "GROUP BY tl.LineName " +
+                       "ORDER BY NumberOfReservations DESC " +
+                       "LIMIT 5";
+
+        try (Statement stmt = con.createStatement()) {
+            ResultSet rs = stmt.executeQuery(query);
+
+            while (rs.next()) {
+    %>
+    <tr>
+        <td><%= rs.getString("TransitLine") %></td>
+        <td><%= rs.getInt("NumberOfReservations") %></td>
+    </tr>
+    <%
             }
-        }
-
-
-        if (request.getParameter("editID") != null) {
-            String editID = request.getParameter("editID");
-            String firstName = request.getParameter("editFirstName");
-            String lastName = request.getParameter("editLastName");
-            String username = request.getParameter("editUsername");
-            String password = request.getParameter("editPassword");
-            String ssn = request.getParameter("editSSN");
-
-            String updateQuery = "UPDATE Employees SET FirstName = ?, LastName = ?, Username = ?, Password = ?, SSN = ? WHERE EmployeeID = ?";
-            try (PreparedStatement pstmt = con.prepareStatement(updateQuery)) {
-                pstmt.setString(1, firstName);
-                pstmt.setString(2, lastName);
-                pstmt.setString(3, username);
-                pstmt.setString(4, password);
-                pstmt.setString(5, ssn); // Update SSN
-                pstmt.setInt(6, Integer.parseInt(editID));
-                pstmt.executeUpdate();
-                out.println("<p>Representative updated successfully!</p>");
-            } catch (SQLException e) {
-                out.println("<p>Error updating representative: " + e.getMessage() + "</p>");
-            }
+        } catch (SQLException e) {
+            out.println("<p>Error fetching most active transit lines: " + e.getMessage() + "</p>");
         }
     %>
-
-    <table border="1">
-        <tr>
-	        <th>Employee ID</th>
-	        <th>First Name</th>
-	        <th>Last Name</th>
-	        <th>Username</th>
-	        <th>Actions</th>
-	    </tr>
-	    <%
-	        String query = "SELECT EmployeeID, FirstName, LastName, Username FROM Employees";
-	        try (Statement stmt = con.createStatement()) {
-	            ResultSet rs = stmt.executeQuery(query);
-	
-	            while (rs.next()) {
-	    %>
-        <tr>
-            <td><%= rs.getInt("EmployeeID") %></td>
-            <td><%= rs.getString("FirstName") %></td>
-            <td><%= rs.getString("LastName") %></td>
-            <td><%= rs.getString("Username") %></td>
-            <td>
-                <!-- Edit button -->
-                <form method="POST" action="">
-				    <input type="hidden" name="editID" value="<%= rs.getInt("EmployeeID") %>">
-				    <!-- First Name and Last Name on the same line -->
-				    First Name: <input type="text" name="editFirstName" value="<%= rs.getString("FirstName") %>">
-				    Last Name: <input type="text" name="editLastName" value="<%= rs.getString("LastName") %>"><br>
-				    <!-- Username and Password on the same line -->
-				    Username: <input type="text" name="editUsername" value="<%= rs.getString("Username") %>">
-				    Password: <input type="password" name="editPassword"><br>
-				    
-				    SSN: <input type="text" name="editSSN" placeholder="Enter SSN"><br>
-				    <button type="submit">Save Changes</button>
-				</form>
-                <br>
-                <!-- Delete button -->
-                <form method="POST" action="">
-                    <input type="hidden" name="deleteID" value="<%= rs.getInt("EmployeeID") %>">
-                    <button type="submit" onclick="return confirm('Are you sure you want to delete this representative?')">Delete Representative</button>
-                </form>
-            </td>
-        </tr>
-        <%
-                }
-            } catch (SQLException e) {
-                out.println("<p>Error fetching representatives: " + e.getMessage() + "</p>");
-            }
-        %>
-    </table>
-
-    <h2>Add New Representative</h2>
-		<form method="POST" action="">
-		    First Name: <input type="text" name="firstName" required>
-		    Last Name: <input type="text" name="lastName" required><br>
-		    Username: <input type="text" name="username" required>
-		    Password: <input type="password" name="password" required><br>
-		    SSN: <input type="text" name="ssn" placeholder="Enter SSN" required><br>
-		    <button type="submit" name="add">Add Representative</button>
-		</form>
-
-
+</table>
+   
 
 </body>
 </html>
